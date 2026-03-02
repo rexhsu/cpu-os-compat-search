@@ -12,7 +12,7 @@ A static GitHub Pages web app to query CPU model compatibility with various oper
 - x86-64 level (v1–v4) detection from instruction set extensions
 - Windows 11 CPU whitelist checking via Microsoft Learn data
 - TPM 2.0 support inference (Intel PTT 8th gen+, AMD fTPM Zen+)
-- 3,300+ Intel/AMD CPUs, 15 operating systems
+- 3,300+ Intel/AMD CPUs (including Ryzen Embedded V1000/R1000/V2000/R2000/V3000 series), 15 operating systems
 
 ## Supported Operating Systems
 
@@ -35,7 +35,12 @@ A static GitHub Pages web app to query CPU model compatibility with various oper
 
 ## Data Sources
 
-- **CPU specs**: [felixsteinke/cpu-spec-dataset](https://github.com/felixsteinke/cpu-spec-dataset)
+- **CPU specs (Intel/AMD desktop, mobile, server)**: [felixsteinke/cpu-spec-dataset](https://github.com/felixsteinke/cpu-spec-dataset)
+- **AMD Ryzen Embedded V1000 series**: [AMD V1000 Series](https://www.amd.com/en/products/embedded/ryzen/ryzen-v1000-series.html) · [WikiChip V1807B](https://en.wikichip.org/wiki/amd/ryzen_embedded/v1807b) · [technical.city V1500B](https://technical.city/en/cpu/Ryzen-Embedded-V1500B)
+- **AMD Ryzen Embedded R1000 series**: [AMD R1000 Series](https://www.amd.com/en/products/embedded/ryzen/ryzen-r1000-series.html) · [WikiChip R1606G](https://en.wikichip.org/wiki/amd/ryzen_embedded/r1606g) · [CNX Software R1102G/R1305G](https://www.cnx-software.com/2020/02/26/amd-goes-low-power-with-6w-ryzen-embedded-r1102g-10w-ryzen-embedded-r1305g-processors/)
+- **AMD Ryzen Embedded V2000 series**: [AMD V2000 Series](https://www.amd.com/en/products/embedded/ryzen/ryzen-v2000-series.html) · [WikiChip V2718](https://en.wikichip.org/wiki/amd/ryzen_embedded/v2718) · [WikiChip V2516](https://en.wikichip.org/wiki/amd/ryzen_embedded/v2516)
+- **AMD Ryzen Embedded R2000 series**: [AMD R2000 Series](https://www.amd.com/en/products/embedded/ryzen/ryzen-r2000-series.html) · [AnandTech R2000 Launch](https://www.anandtech.com/show/17460/amd-updates-ryzen-embedded-series-r2000-series-with-up-to-four-cores-and-eight-threads)
+- **AMD Ryzen Embedded V3000 series**: [AMD V3000 Series](https://www.amd.com/en/products/embedded/ryzen/ryzen-v3000-series.html) · [AMD V3000 Product Brief (PDF)](https://www.amd.com/content/dam/amd/en/documents/products/embedded/ryzen/ryzen-embedded-v3000-series-product-brief.pdf)
 - **Win11 whitelist**: [Microsoft Learn](https://learn.microsoft.com/en-us/windows-hardware/design/minimum/supported/windows-11-supported-intel-processors)
 - **OS requirements**: Official documentation (manually curated)
 
