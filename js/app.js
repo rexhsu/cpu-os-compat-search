@@ -136,13 +136,29 @@
 
   function bindCpuSearch() {
     let currentCpu = null;
+    let currentCpuOsResults = null;
+    const filterInput = document.getElementById('cpu-os-filter');
+
+    function osClickHandler(os) {
+      if (cpuOsNav && currentCpu) cpuOsNav.navigate(currentCpu, os);
+    }
+
     setupCpuAutocomplete('cpu-search', 'cpu-autocomplete', (cpu) => {
       currentCpu = cpu;
       UI.renderCpuInfo(cpu);
-      const results = SearchEngine.findCompatibleOs(cpu.id);
-      UI.renderCpuCompatResults(results, (os) => {
-        if (cpuOsNav) cpuOsNav.navigate(currentCpu, os);
-      });
+      currentCpuOsResults = SearchEngine.findCompatibleOs(cpu.id);
+      filterInput.value = '';
+      UI.renderCpuCompatResults(currentCpuOsResults, '', osClickHandler);
+    });
+
+    let filterTimer = null;
+    filterInput.addEventListener('input', () => {
+      clearTimeout(filterTimer);
+      filterTimer = setTimeout(() => {
+        if (currentCpuOsResults) {
+          UI.renderCpuCompatResults(currentCpuOsResults, filterInput.value.trim(), osClickHandler);
+        }
+      }, 200);
     });
   }
 

@@ -84,42 +84,65 @@ const UI = (() => {
   /**
    * Render OS compatibility results for a CPU.
    */
-  function renderCpuCompatResults(results, onOsClick) {
+  function renderCpuCompatResults(results, filterText = '', onOsClick) {
     const container = document.getElementById('cpu-compat-results');
+    const countEl = document.getElementById('cpu-os-count');
     container.innerHTML = '';
 
-    for (const result of results) {
-      const card = document.createElement('div');
-      card.className = `card compat-card compat-${result.status} mb-2`;
+    let filtered = results;
+    if (filterText) {
+      const q = filterText.toLowerCase();
+      filtered = results.filter(r =>
+        r.os.name.toLowerCase().includes(q) ||
+        (r.os.vendor || '').toLowerCase().includes(q)
+      );
+    }
+
+    const compatible = filtered.filter(r => r.status !== 'fail');
+    const incompatible = filtered.filter(r => r.status === 'fail');
+
+    countEl.textContent = `${compatible.length} compatible / ${incompatible.length} incompatible (of ${results.length} total)`;
+
+    const toShow = compatible.slice(0, 100);
+    if (toShow.length === 0) {
+      container.innerHTML = '<p class="text-muted">No compatible OS found for this filter.</p>';
+      return;
+    }
+
+    const list = document.createElement('div');
+    list.className = 'card';
+    const listBody = document.createElement('div');
+    listBody.className = 'card-body p-0';
+
+    for (const result of toShow) {
+      const item = document.createElement('div');
+      item.className = 'cpu-list-item';
 
       if (onOsClick) {
-        card.style.cursor = 'pointer';
-        card.title = 'View detailed compatibility';
-        card.addEventListener('click', () => onOsClick(result.os));
+        item.style.cursor = 'pointer';
+        item.title = 'View detailed compatibility';
+        item.addEventListener('click', () => onOsClick(result.os));
       }
-
-      const statusIcon = result.status === 'pass' ? 'bi-check-circle-fill' :
-                          result.status === 'fail' ? 'bi-x-circle-fill' : 'bi-exclamation-triangle-fill';
-      const statusText = result.status === 'pass' ? 'Compatible' :
-                          result.status === 'fail' ? 'Not Compatible' : 'Partial';
-      const statusClass = `text-${result.status}`;
-
-      card.innerHTML = `
-        <div class="card-body py-2 px-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <strong>${escapeHtml(result.os.name)}</strong>
-              <span class="text-muted ms-2 small">(v${result.os.x86_64_level} / ${result.os.minRamGB} GB RAM)</span>
-            </div>
-            <span class="compat-status ${statusClass}">
-              <i class="bi ${statusIcon}"></i> ${statusText}
-            </span>
-          </div>
-          <div class="compat-reason">${result.reasons.map(escapeHtml).join(' | ')}</div>
+      const levelClass = `badge-level-${result.os.x86_64_level}`;
+      const statusIcon = result.status === 'pass' ? 'text-success' : 'text-warning';
+      item.innerHTML = `
+        <div>
+          <i class="bi bi-check-circle-fill ${statusIcon}"></i>
+          <span class="ms-1">${escapeHtml(result.os.name)}</span>
+          ${result.status === 'warn' ? `<span class="text-muted small ms-1">(${result.reasons.join(', ')})</span>` : ''}
         </div>
+        <span class="badge ${levelClass}">v${result.os.x86_64_level}</span>
       `;
+      listBody.appendChild(item);
+    }
 
-      container.appendChild(card);
+    list.appendChild(listBody);
+    container.appendChild(list);
+
+    if (compatible.length > 100) {
+      container.insertAdjacentHTML('beforeend',
+        `<p class="text-muted small mt-2">Showing first 100 of ${compatible.length} compatible OS. Use the filter to narrow results.</p>`
+      );
     }
   }
 
