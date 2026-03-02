@@ -18,9 +18,6 @@
       loadingEl.classList.add('d-none');
       mainContent.classList.remove('d-none');
 
-      // Populate OS dropdowns
-      UI.populateOsSelect(osRequirements);
-      UI.populateCpuOsOsSelect(osRequirements);
       UI.showMetadata(metadata);
 
       // Bind events — each in its own try/catch so one failure doesn't break others
@@ -38,9 +35,14 @@
 
   /**
    * Shared helper: set up autocomplete on an input + dropdown pair.
-   * Returns { getSelected, setOnChange } for the caller to hook into.
+   * @param {string} inputId - ID of the text input element
+   * @param {string} dropdownId - ID of the dropdown container
+   * @param {function} searchFn - function(query) that returns results array
+   * @param {function} renderFn - function(results, dropdown, handleSelect) to render items
+   * @param {function} onSelect - callback when user selects an item
+   * @param {function} getDisplayName - function(item) returning display string for input
    */
-  function setupAutocomplete(inputId, dropdownId, onSelect) {
+  function setupAutocomplete(inputId, dropdownId, { searchFn, renderFn, onSelect, getDisplayName }) {
     const input = document.getElementById(inputId);
     const dropdown = document.getElementById(dropdownId);
     if (!input || !dropdown) {
@@ -51,11 +53,11 @@
     let debounceTimer = null;
     let activeIndex = -1;
 
-    function handleSelect(cpu) {
-      input.value = cpu.name;
+    function handleSelect(item) {
+      input.value = getDisplayName(item);
       dropdown.classList.add('d-none');
       activeIndex = -1;
-      onSelect(cpu);
+      onSelect(item);
     }
 
     input.addEventListener('input', () => {
@@ -66,9 +68,9 @@
           dropdown.classList.add('d-none');
           return;
         }
-        const results = SearchEngine.searchCpus(query);
+        const results = searchFn(query);
         activeIndex = -1;
-        UI.renderAutocomplete(results, dropdown, handleSelect);
+        renderFn(results, dropdown, handleSelect);
       }, 200);
     });
 
@@ -102,7 +104,7 @@
       }
     }
 
-    // Close dropdown on outside mousedown (fires before native <select> opens)
+    // Close dropdown on outside mousedown
     document.addEventListener('mousedown', (e) => {
       if (!input.contains(e.target) && !dropdown.contains(e.target)) {
         dropdown.classList.add('d-none');
@@ -113,8 +115,26 @@
     return { input, dropdown };
   }
 
+  function setupCpuAutocomplete(inputId, dropdownId, onSelect) {
+    return setupAutocomplete(inputId, dropdownId, {
+      searchFn: (q) => SearchEngine.searchCpus(q),
+      renderFn: UI.renderAutocomplete,
+      onSelect,
+      getDisplayName: (cpu) => cpu.name,
+    });
+  }
+
+  function setupOsAutocomplete(inputId, dropdownId, onSelect) {
+    return setupAutocomplete(inputId, dropdownId, {
+      searchFn: (q) => SearchEngine.searchOs(q),
+      renderFn: UI.renderOsAutocomplete,
+      onSelect,
+      getDisplayName: (os) => os.name,
+    });
+  }
+
   function bindCpuSearch() {
-    setupAutocomplete('cpu-search', 'cpu-autocomplete', (cpu) => {
+    setupCpuAutocomplete('cpu-search', 'cpu-autocomplete', (cpu) => {
       UI.renderCpuInfo(cpu);
       const results = SearchEngine.findCompatibleOs(cpu.id);
       UI.renderCpuCompatResults(results);
@@ -122,59 +142,48 @@
   }
 
   function bindCpuOsSearch() {
-    const osSelect = document.getElementById('cpuos-os-select');
-    if (!osSelect) {
-      console.error('bindCpuOsSearch: cpuos-os-select not found');
-      return;
-    }
-
-    let selectedCpuOs = null;
+    let selectedCpu = null;
+    let selectedOs = null;
 
     function tryRender() {
-      const osId = osSelect.value;
-      if (!selectedCpuOs || !osId) return;
-      const os = DataLoader.getOsRequirements().find(o => o.id === osId);
-      if (!os) return;
-      const result = SearchEngine.detailedCheck(selectedCpuOs, os);
-      UI.renderCpuOsReport(selectedCpuOs, os, result);
+      if (!selectedCpu || !selectedOs) return;
+      const result = SearchEngine.detailedCheck(selectedCpu, selectedOs);
+      UI.renderCpuOsReport(selectedCpu, selectedOs, result);
     }
 
-    const ac = setupAutocomplete('cpuos-cpu-search', 'cpuos-cpu-autocomplete', (cpu) => {
-      selectedCpuOs = cpu;
+    const cpuAc = setupCpuAutocomplete('cpuos-cpu-search', 'cpuos-cpu-autocomplete', (cpu) => {
+      selectedCpu = cpu;
       tryRender();
     });
 
-    if (!ac) return;
+    const osAc = setupOsAutocomplete('cpuos-os-search', 'cpuos-os-autocomplete', (os) => {
+      selectedOs = os;
+      tryRender();
+    });
 
-    // When user types new text, clear previous selection
-    ac.input.addEventListener('input', () => {
-      selectedCpuOs = null;
+    if (!cpuAc || !osAc) return;
+
+    // When user types new CPU text, clear previous selection
+    cpuAc.input.addEventListener('input', () => {
+      selectedCpu = null;
       const resultEl = document.getElementById('cpuos-result');
       if (resultEl) resultEl.innerHTML = '';
     });
 
-    osSelect.addEventListener('change', () => {
-      tryRender();
+    // When user types new OS text, clear previous selection
+    osAc.input.addEventListener('input', () => {
+      selectedOs = null;
+      const resultEl = document.getElementById('cpuos-result');
+      if (resultEl) resultEl.innerHTML = '';
     });
   }
 
   function bindOsSelect() {
-    const select = document.getElementById('os-select');
     const filterInput = document.getElementById('os-cpu-filter');
 
-    select.addEventListener('change', () => {
-      const osId = select.value;
-      if (!osId) {
-        document.getElementById('os-info').classList.add('d-none');
-        currentOsResults = null;
-        return;
-      }
-
-      const os = DataLoader.getOsRequirements().find(o => o.id === osId);
-      if (!os) return;
-
+    setupOsAutocomplete('os-search', 'os-autocomplete', (os) => {
       UI.renderOsInfo(os);
-      currentOsResults = SearchEngine.findCompatibleCpus(osId);
+      currentOsResults = SearchEngine.findCompatibleCpus(os.id);
       filterInput.value = '';
       UI.renderOsCompatResults(currentOsResults);
     });

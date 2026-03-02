@@ -74,11 +74,12 @@
                        autocomplete="off">
                 <div id="cpuos-cpu-autocomplete" class="autocomplete-dropdown d-none"></div>
               </div>
-              <div class="mb-3">
-                <label for="cpuos-os-select" class="form-label fw-bold">Select an operating system</label>
-                <select class="form-select form-select-lg" id="cpuos-os-select">
-                  <option value="">-- Choose an OS --</option>
-                </select>
+              <div class="mb-3 position-relative">
+                <label for="cpuos-os-search" class="form-label fw-bold">Enter operating system name</label>
+                <input type="text" class="form-control form-control-lg" id="cpuos-os-search"
+                       placeholder="e.g. Windows 11, RHEL 10, Ubuntu..."
+                       autocomplete="off">
+                <div id="cpuos-os-autocomplete" class="autocomplete-dropdown d-none"></div>
               </div>
               <div id="cpuos-result"></div>
             </div>
@@ -122,11 +123,12 @@
         <div class="tab-pane fade" id="os-pane" role="tabpanel" aria-labelledby="os-tab">
           <div class="row">
             <div class="col-lg-8 mx-auto">
-              <div class="mb-3">
-                <label for="os-select" class="form-label fw-bold">Select an operating system</label>
-                <select class="form-select form-select-lg" id="os-select">
-                  <option value="">-- Choose an OS --</option>
-                </select>
+              <div class="mb-3 position-relative">
+                <label for="os-search" class="form-label fw-bold">Enter operating system name</label>
+                <input type="text" class="form-control form-control-lg" id="os-search"
+                       placeholder="e.g. Windows 11, RHEL 10, Ubuntu..."
+                       autocomplete="off">
+                <div id="os-autocomplete" class="autocomplete-dropdown d-none"></div>
               </div>
 
               <!-- OS Info Card -->

@@ -19,11 +19,29 @@ from bs4 import BeautifulSoup
 
 # Each version maps to its Microsoft Learn URLs for Intel/AMD/Qualcomm supported CPUs.
 WHITELIST_VERSIONS = {
+    "win10-1809": {
+        "label": "Windows 10 Enterprise LTSC 1809",
+        "intel": "https://learn.microsoft.com/en-us/windows-hardware/design/minimum/supported/windows-10-1809-supported-intel-processors",
+        "amd": "https://learn.microsoft.com/en-us/windows-hardware/design/minimum/supported/windows-10-1809-supported-amd-processors",
+        "qualcomm": "https://learn.microsoft.com/en-us/windows-hardware/design/minimum/supported/windows-10-1809-supported-qualcomm-processors",
+    },
+    "win10-21h2": {
+        "label": "Windows 10 Enterprise LTSC 2021",
+        "intel": "https://learn.microsoft.com/en-us/windows-hardware/design/minimum/supported/windows-10-21h2-supported-intel-processors",
+        "amd": "https://learn.microsoft.com/en-us/windows-hardware/design/minimum/supported/windows-10-21h2-supported-amd-processors",
+        "qualcomm": "https://learn.microsoft.com/en-us/windows-hardware/design/minimum/supported/windows-10-21h2-supported-qualcomm-processors",
+    },
     "win10-22h2": {
         "label": "Windows 10 22H2",
         "intel": "https://learn.microsoft.com/en-us/windows-hardware/design/minimum/supported/windows-10-22h2-supported-intel-processors",
         "amd": "https://learn.microsoft.com/en-us/windows-hardware/design/minimum/supported/windows-10-22h2-supported-amd-processors",
         "qualcomm": "https://learn.microsoft.com/en-us/windows-hardware/design/minimum/supported/windows-10-22h2-supported-qualcomm-processors",
+    },
+    "win11-22h2": {
+        "label": "Windows 11 22H2/23H2",
+        "intel": "https://learn.microsoft.com/en-us/windows-hardware/design/minimum/supported/windows-11-22h2-supported-intel-processors",
+        "amd": "https://learn.microsoft.com/en-us/windows-hardware/design/minimum/supported/windows-11-22h2-supported-amd-processors",
+        "qualcomm": "https://learn.microsoft.com/en-us/windows-hardware/design/minimum/supported/windows-11-22h2-supported-qualcomm-processors",
     },
     "win11-24h2": {
         "label": "Windows 11 24H2",

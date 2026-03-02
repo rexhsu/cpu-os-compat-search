@@ -118,29 +118,34 @@ const UI = (() => {
   }
 
   /**
-   * Populate the OS select dropdown.
+   * Render OS autocomplete dropdown items.
    */
-  function populateOsSelect(osList) {
-    const select = document.getElementById('os-select');
-    // Group by vendor
-    const groups = {};
-    for (const os of osList) {
-      const vendor = os.vendor || 'Other';
-      if (!groups[vendor]) groups[vendor] = [];
-      groups[vendor].push(os);
+  function renderOsAutocomplete(osList, container, onSelect) {
+    container.innerHTML = '';
+    if (osList.length === 0) {
+      container.classList.add('d-none');
+      return;
     }
 
-    for (const [vendor, entries] of Object.entries(groups)) {
-      const optgroup = document.createElement('optgroup');
-      optgroup.label = vendor;
-      for (const os of entries) {
-        const option = document.createElement('option');
-        option.value = os.id;
-        option.textContent = os.name;
-        optgroup.appendChild(option);
-      }
-      select.appendChild(optgroup);
+    for (const os of osList) {
+      const item = document.createElement('div');
+      item.className = 'autocomplete-item';
+      item.dataset.osId = os.id;
+
+      const levelClass = `badge-level-${os.x86_64_level}`;
+      item.innerHTML = `
+        <div>
+          <span class="cpu-name">${escapeHtml(os.name)}</span>
+          <div class="cpu-meta">${escapeHtml(os.vendor || '')} | ${escapeHtml(os.type || '')}</div>
+        </div>
+        <span class="badge ${levelClass}">v${os.x86_64_level}</span>
+      `;
+
+      item.addEventListener('click', () => onSelect(os));
+      container.appendChild(item);
     }
+
+    container.classList.remove('d-none');
   }
 
   /**
@@ -256,30 +261,6 @@ const UI = (() => {
     return div.innerHTML;
   }
 
-  /**
-   * Populate the CPU+OS tab's OS select dropdown.
-   */
-  function populateCpuOsOsSelect(osList) {
-    const select = document.getElementById('cpuos-os-select');
-    const groups = {};
-    for (const os of osList) {
-      const vendor = os.vendor || 'Other';
-      if (!groups[vendor]) groups[vendor] = [];
-      groups[vendor].push(os);
-    }
-
-    for (const [vendor, entries] of Object.entries(groups)) {
-      const optgroup = document.createElement('optgroup');
-      optgroup.label = vendor;
-      for (const os of entries) {
-        const option = document.createElement('option');
-        option.value = os.id;
-        option.textContent = os.name;
-        optgroup.appendChild(option);
-      }
-      select.appendChild(optgroup);
-    }
-  }
 
   /**
    * Render detailed CPU + OS compatibility report.
@@ -351,10 +332,9 @@ const UI = (() => {
 
   return {
     renderAutocomplete,
+    renderOsAutocomplete,
     renderCpuInfo,
     renderCpuCompatResults,
-    populateOsSelect,
-    populateCpuOsOsSelect,
     renderOsInfo,
     renderOsCompatResults,
     renderCpuOsReport,

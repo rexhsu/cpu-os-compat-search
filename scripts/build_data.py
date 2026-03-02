@@ -24,7 +24,10 @@ EXPECTED_FILES = [
     "os-requirements.json",
     "cpu-intel.json",
     "cpu-amd.json",
+    "windows-cpu-whitelist-win10-1809.json",
+    "windows-cpu-whitelist-win10-21h2.json",
     "windows-cpu-whitelist-win10-22h2.json",
+    "windows-cpu-whitelist-win11-22h2.json",
     "windows-cpu-whitelist-win11-24h2.json",
     "windows-cpu-whitelist-win11-25h2.json",
 ]

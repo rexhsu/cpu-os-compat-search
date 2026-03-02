@@ -381,5 +381,62 @@ const SearchEngine = (() => {
     return { overall, checks };
   }
 
-  return { checkCompatibility, findCompatibleOs, findCompatibleCpus, searchCpus, isOnCpuWhitelist, detailedCheck };
+  /**
+   * Fuzzy search OS entries by query string.
+   */
+  function searchOs(query, limit = 20) {
+    if (!query || query.length < 2) return [];
+
+    const osList = DataLoader.getOsRequirements();
+    const q = query.toLowerCase().replace(/\s+/g, ' ').trim();
+    const terms = q.split(' ');
+
+    const scored = [];
+    for (const os of osList) {
+      const nameL = os.name.toLowerCase();
+      const vendorL = (os.vendor || '').toLowerCase();
+      const idL = os.id.toLowerCase();
+
+      let score = 0;
+
+      // Exact name match
+      if (nameL === q) {
+        score += 100;
+      } else if (nameL.includes(q)) {
+        score += 50;
+      }
+
+      // ID match (e.g. "rhel-9", "win11")
+      if (idL.includes(q)) {
+        score += 30;
+      }
+
+      // Vendor match
+      if (vendorL.includes(q)) {
+        score += 20;
+      }
+
+      // Term-by-term matching
+      let allTermsMatch = true;
+      for (const term of terms) {
+        if (nameL.includes(term) || vendorL.includes(term) || idL.includes(term)) {
+          score += 10;
+        } else {
+          allTermsMatch = false;
+        }
+      }
+      if (allTermsMatch && terms.length > 1) {
+        score += 20;
+      }
+
+      if (score > 0) {
+        scored.push({ os, score });
+      }
+    }
+
+    scored.sort((a, b) => b.score - a.score || a.os.name.localeCompare(b.os.name));
+    return scored.slice(0, limit).map(s => s.os);
+  }
+
+  return { checkCompatibility, findCompatibleOs, findCompatibleCpus, searchCpus, searchOs, isOnCpuWhitelist, detailedCheck };
 })();

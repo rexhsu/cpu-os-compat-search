@@ -7,6 +7,50 @@ from datetime import datetime, timezone
 
 OS_REQUIREMENTS = [
     {
+        "id": "windows-11-22h2",
+        "name": "Windows 11 22H2",
+        "vendor": "Microsoft",
+        "type": "desktop",
+        "releaseDate": "2022-09",
+        "eol": "2025-10",
+        "x86_64_level": 2,
+        "minRamGB": 4,
+        "minStorageGB": 64,
+        "additionalRequirements": {
+            "tpm2": True,
+            "uefi": True,
+            "secureBootCapable": True,
+            "cpuWhitelist": {
+                "dataFile": "windows-cpu-whitelist-win11-22h2.json",
+                "enforcement": "fail"
+            }
+        },
+        "requiredFeatures": ["sse42", "popcnt"],
+        "notes": "Requires TPM 2.0, UEFI Secure Boot, and CPU must be on Microsoft's supported list."
+    },
+    {
+        "id": "windows-11-23h2",
+        "name": "Windows 11 23H2",
+        "vendor": "Microsoft",
+        "type": "desktop",
+        "releaseDate": "2023-10",
+        "eol": "2025-11",
+        "x86_64_level": 2,
+        "minRamGB": 4,
+        "minStorageGB": 64,
+        "additionalRequirements": {
+            "tpm2": True,
+            "uefi": True,
+            "secureBootCapable": True,
+            "cpuWhitelist": {
+                "dataFile": "windows-cpu-whitelist-win11-22h2.json",
+                "enforcement": "fail"
+            }
+        },
+        "requiredFeatures": ["sse42", "popcnt"],
+        "notes": "Requires TPM 2.0, UEFI Secure Boot, and CPU must be on Microsoft's supported list. Shares CPU list with 22H2."
+    },
+    {
         "id": "windows-11-24h2",
         "name": "Windows 11 24H2",
         "vendor": "Microsoft",
@@ -68,6 +112,44 @@ OS_REQUIREMENTS = [
         },
         "requiredFeatures": [],
         "notes": "End of support October 2025. CPU must be on Microsoft's supported list."
+    },
+    {
+        "id": "windows-10-ltsc-2021",
+        "name": "Windows 10 Enterprise LTSC 2021",
+        "vendor": "Microsoft",
+        "type": "desktop",
+        "releaseDate": "2021-11",
+        "eol": "2027-01",
+        "x86_64_level": 1,
+        "minRamGB": 2,
+        "minStorageGB": 32,
+        "additionalRequirements": {
+            "cpuWhitelist": {
+                "dataFile": "windows-cpu-whitelist-win10-21h2.json",
+                "enforcement": "fail"
+            }
+        },
+        "requiredFeatures": [],
+        "notes": "Long-Term Servicing Channel. CPU must be on Microsoft's supported list."
+    },
+    {
+        "id": "windows-10-ltsc-1809",
+        "name": "Windows 10 Enterprise LTSC 1809",
+        "vendor": "Microsoft",
+        "type": "desktop",
+        "releaseDate": "2018-11",
+        "eol": "2029-01",
+        "x86_64_level": 1,
+        "minRamGB": 2,
+        "minStorageGB": 32,
+        "additionalRequirements": {
+            "cpuWhitelist": {
+                "dataFile": "windows-cpu-whitelist-win10-1809.json",
+                "enforcement": "fail"
+            }
+        },
+        "requiredFeatures": [],
+        "notes": "Long-Term Servicing Channel. CPU must be on Microsoft's supported list."
     },
     {
         "id": "windows-server-2025",
