@@ -8,26 +8,155 @@ const SearchEngine = (() => {
    */
   function isOnWin11Whitelist(cpu) {
     const whitelist = DataLoader.getWin11Whitelist();
-    const entries = cpu.vendor === 'intel' ? whitelist.intel : whitelist.amd;
-    const cpuName = cpu.name.toLowerCase();
-    const cpuProc = (cpu.processorNumber || '').toLowerCase();
+    if (cpu.vendor === 'intel') return matchesIntelWhitelist(cpu, whitelist.intel);
+    if (cpu.vendor === 'amd') return matchesAmdWhitelist(cpu, whitelist.amd);
+    return false;
+  }
+
+  /**
+   * Extract series prefix from a series number like "G4000", "W-1200", "4000U".
+   * Strips trailing letter suffix then trailing zeros: "G4000"→"g4", "W-1200"→"w-12", "4000U"→"4"
+   */
+  function getSeriesPrefix(seriesNum) {
+    return seriesNum.replace(/[a-z]+$/i, '').replace(/0+$/, '').toLowerCase();
+  }
+
+  function matchesAmdWhitelist(cpu, entries) {
+    const cpuProc = (cpu.processorNumber || '').toLowerCase().trim();
+    if (!cpuProc) return false;
+
+    // Normalize: remove ™/® symbols and extra spaces
+    const cpuProcClean = cpuProc.replace(/[™®]/g, '').replace(/\s+/g, ' ').trim();
+    const procTokens = cpuProcClean.split(' ');
+    const lastToken = procTokens[procTokens.length - 1];
 
     for (const entry of entries) {
-      const entryLower = entry.toLowerCase();
-      if (cpuName.includes(entryLower) || entryLower.includes(cpuProc)) {
-        return true;
+      const e = entry.toLowerCase().trim();
+      const entryTokens = e.split(/\s+/);
+
+      // Suffix match: entry matches the last N tokens of processorNumber
+      // "Gold 3150C" matches "amd athlon gold 3150c" (last 2 tokens)
+      if (entryTokens.length <= procTokens.length) {
+        const suffix = procTokens.slice(-entryTokens.length).join(' ');
+        if (suffix === e) return true;
       }
-      // Partial match: processor number in whitelist entry
-      if (cpuProc && entryLower.includes(cpuProc)) {
-        return true;
+
+      // First-token match: entry's model number matches proc's last token
+      // "2700E Processor" first token "2700e" matches proc last token "2700e"
+      if (entryTokens[0] === lastToken) return true;
+
+      // Short processorNumber (no AMD prefix): direct/word match
+      if (!cpuProc.startsWith('amd')) {
+        if (e === cpuProc) return true;
+        if (entryTokens.includes(cpuProc)) return true;
       }
-      // Match by processor number pattern
-      if (cpuProc && cpuProc.length > 3) {
-        const procClean = cpuProc.replace(/[^a-z0-9]/g, '');
-        const entryClean = entryLower.replace(/[^a-z0-9]/g, '');
-        if (entryClean.includes(procClean) || procClean.includes(entryClean)) {
+
+      // Series match: "Ryzen Embedded R2000 Series" → prefix "r2"
+      const sm = e.match(/(\w+\d+)\s+series$/i);
+      if (sm) {
+        const prefix = getSeriesPrefix(sm[1]);
+        if (prefix.length >= 2 && lastToken.startsWith(prefix)) return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Extract Intel Core generation from processor number.
+   * "i5-8400"→8, "i7-12700K"→12, "m3-8100Y"→8
+   */
+  function extractIntelCoreGen(proc) {
+    const m = proc.match(/^(?:i\d|m\d?)-?(\d+)/i);
+    if (!m) return 0;
+    return Math.floor(parseInt(m[1]) / 1000);
+  }
+
+  function matchesIntelWhitelist(cpu, entries) {
+    const cpuName = cpu.name.toLowerCase();
+    const cpuProc = (cpu.processorNumber || '').toLowerCase().trim();
+    const cpuGen = extractIntelCoreGen(cpuProc);
+
+    for (const entry of entries) {
+      const e = entry.toLowerCase().trim();
+      let m;
+
+      // "Nth Generation Core iX Processors"
+      m = e.match(/^(\d+)(?:th|st|nd|rd)\s+generation\s+core\s+(i\d|m)\s+processors?$/);
+      if (m) {
+        if (cpuGen === parseInt(m[1]) && cpuProc.startsWith(m[2])) return true;
+        continue;
+      }
+
+      // "Core iX processors (Nth Generation)"
+      m = e.match(/^core\s+(i\d|m)\s+processors?\s+\((\d+)(?:th|st|nd|rd)\s+generation\)$/);
+      if (m) {
+        if (cpuGen === parseInt(m[2]) && cpuProc.startsWith(m[1])) return true;
+        continue;
+      }
+
+      // "Nth Generation Xeon Scalable Processors" or generic "Xeon Scalable Processors"
+      if (/xeon\s+scalable\s+processors?/.test(e)) {
+        if (cpuName.includes('xeon') && /platinum|gold|silver|bronze/.test(cpuName)) return true;
+        continue;
+      }
+
+      // "Core Ultra Processors (Series N)"
+      m = e.match(/^core\s+ultra\s+processors?\s+\(series\s+\d+\)$/);
+      if (m) {
+        if (cpuName.includes('core') && cpuName.includes('ultra')) return true;
+        continue;
+      }
+
+      // "Core Processors (Series N)" — non-Ultra new naming
+      m = e.match(/^core\s+processors?\s+\(series\s+\d+\)$/);
+      if (m) {
+        // Match Intel Core (non-Ultra) new naming. Check name has "core" but not "ultra"
+        // and not a legacy tier (i3/i5/i7/i9) to avoid matching older Core CPUs.
+        if (cpuName.includes('core') && !cpuName.includes('ultra') &&
+            !/\bi[3579]-/.test(cpuProc) && !/celeron|pentium|xeon|atom/.test(cpuName)) {
           return true;
         }
+        continue;
+      }
+
+      // "Xeon NNN Processors for Workstation"
+      m = e.match(/^xeon\s+(\d+)\s+processors?\s+for\s+workstation$/);
+      if (m) {
+        if (cpuName.includes('xeon') && cpuProc.startsWith(m[1])) return true;
+        continue;
+      }
+
+      // "Intel NNN Processor for Desktop"
+      m = e.match(/^intel\s+(\S+)\s+processor\s+for\s+desktop$/);
+      if (m) {
+        if (cpuProc === m[1].toLowerCase()) return true;
+        continue;
+      }
+
+      // "ProductLine SERIES Series" — e.g. "Celeron G4000 Series", "Xeon W-1200 Series"
+      m = e.match(/^(.+?)\s+(\S+)\s+series$/);
+      if (m && /\d/.test(m[2])) {
+        const productLine = m[1];
+        const prefix = getSeriesPrefix(m[2]);
+        if (!prefix) continue;
+
+        const brands = ['celeron', 'pentium', 'xeon', 'atom'];
+        const brand = brands.find(b => productLine.includes(b));
+        if (brand) {
+          if (cpuName.includes(brand) && cpuProc.startsWith(prefix)) return true;
+        } else {
+          // "Core Processor N300 Series" or similar
+          if (cpuProc.startsWith(prefix)) return true;
+        }
+        continue;
+      }
+
+      // Standalone "NXXX Series" — "N100 Series", "N200 Series", "U300 series"
+      m = e.match(/^([a-z]?\d+)\s+series$/i);
+      if (m) {
+        const prefix = getSeriesPrefix(m[1]);
+        if (prefix.length >= 2 && cpuProc.startsWith(prefix)) return true;
+        continue;
       }
     }
     return false;
@@ -62,21 +191,11 @@ const SearchEngine = (() => {
       reasons.push('TPM 2.0 required (may need discrete TPM module)');
     }
 
-    // Check Windows 11 CPU whitelist
+    // Check Windows 11 CPU whitelist (strict — no fallback heuristic)
     if (os.additionalRequirements?.win11CpuWhitelist) {
       if (!isOnWin11Whitelist(cpu)) {
-        // Whitelist check: use generation as heuristic fallback
-        const isLikelySupported = (
-          (cpu.vendor === 'intel' && cpu.generation >= 8) ||
-          (cpu.vendor === 'amd' && cpu.x86_64_level >= 3)
-        );
-        if (!isLikelySupported) {
-          status = 'fail';
-          reasons.push('Not on Windows 11 supported CPU list');
-        } else {
-          if (status === 'pass') status = 'warn';
-          reasons.push('Not found in whitelist (likely supported based on generation)');
-        }
+        status = 'fail';
+        reasons.push('Not on Windows 11 supported CPU list');
       }
     }
 
@@ -247,22 +366,13 @@ const SearchEngine = (() => {
       }
     }
 
-    // Win11 CPU Whitelist check
+    // Win11 CPU Whitelist check (strict — no fallback heuristic)
     if (os.additionalRequirements?.win11CpuWhitelist) {
       if (isOnWin11Whitelist(cpu)) {
         checks.push({ name: 'Win11 CPU Whitelist', status: 'pass', detail: 'CPU is on supported list' });
       } else {
-        const isLikelySupported = (
-          (cpu.vendor === 'intel' && cpu.generation >= 8) ||
-          (cpu.vendor === 'amd' && cpu.x86_64_level >= 3)
-        );
-        if (!isLikelySupported) {
-          overall = 'fail';
-          checks.push({ name: 'Win11 CPU Whitelist', status: 'fail', detail: 'Not on Windows 11 supported CPU list' });
-        } else {
-          if (overall === 'pass') overall = 'warn';
-          checks.push({ name: 'Win11 CPU Whitelist', status: 'warn', detail: 'Not found in whitelist (likely supported based on generation)' });
-        }
+        overall = 'fail';
+        checks.push({ name: 'Win11 CPU Whitelist', status: 'fail', detail: 'Not on Windows 11 supported CPU list' });
       }
     }
 
