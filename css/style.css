@@ -1,3 +1,8 @@
+/* Autocomplete wrapper – establish stacking context above siblings */
+.position-relative:has(.autocomplete-dropdown) {
+  z-index: 10;
+}
+
 /* Autocomplete dropdown */
 .autocomplete-dropdown {
   position: absolute;
