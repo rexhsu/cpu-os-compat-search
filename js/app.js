@@ -177,6 +177,14 @@
       }
     }
 
+    // Close autocomplete on blur so it doesn't overlay the OS select
+    input.addEventListener('blur', () => {
+      setTimeout(() => {
+        dropdown.classList.add('d-none');
+        activeIndex = -1;
+      }, 200);
+    });
+
     document.addEventListener('click', (e) => {
       if (!input.contains(e.target) && !dropdown.contains(e.target)) {
         dropdown.classList.add('d-none');
