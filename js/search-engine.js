@@ -35,9 +35,10 @@ const SearchEngine = (() => {
       const e = entry.toLowerCase().trim();
       const entryTokens = e.split(/\s+/);
 
-      // "Ryzen Family" — matches any Ryzen processor
+      // "Ryzen Family" — matches mainstream Ryzen (3/5/7/9, PRO, Threadripper)
+      // but NOT Ryzen Embedded (separate product line, needs explicit listing)
       if (/^(?:amd\s+)?ryzen\s+family$/.test(e)) {
-        if (cpuName.includes('ryzen')) return true;
+        if (cpuName.includes('ryzen') && !cpuName.includes('embedded')) return true;
         continue;
       }
 
