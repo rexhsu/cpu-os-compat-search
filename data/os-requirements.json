@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "generated": "2026-03-02T03:00:36Z",
+    "generated": "2026-03-02T07:50:35Z",
     "source": "Manual curation from official OS documentation",
-    "count": 15
+    "count": 23
   },
   "operatingSystems": [
     {
@@ -256,6 +256,140 @@
       "additionalRequirements": {},
       "requiredFeatures": [],
       "notes": "Basic x86-64 requirements. Short support cycle."
+    },
+    {
+      "id": "rocky-10",
+      "name": "Rocky Linux 10",
+      "vendor": "Rocky Enterprise Software Foundation",
+      "type": "server",
+      "releaseDate": "2025-07",
+      "eol": "2035-05",
+      "x86_64_level": 3,
+      "minRamGB": 1.5,
+      "minStorageGB": 10,
+      "additionalRequirements": {},
+      "requiredFeatures": [
+        "sse42",
+        "popcnt",
+        "avx",
+        "avx2",
+        "bmi1",
+        "bmi2",
+        "fma"
+      ],
+      "notes": "RHEL 10 compatible rebuild. Requires x86-64-v3: AVX, AVX2, BMI1, BMI2, FMA."
+    },
+    {
+      "id": "rocky-9",
+      "name": "Rocky Linux 9",
+      "vendor": "Rocky Enterprise Software Foundation",
+      "type": "server",
+      "releaseDate": "2022-07",
+      "eol": "2032-05",
+      "x86_64_level": 2,
+      "minRamGB": 1.5,
+      "minStorageGB": 10,
+      "additionalRequirements": {},
+      "requiredFeatures": [
+        "sse42",
+        "popcnt"
+      ],
+      "notes": "RHEL 9 compatible rebuild. Requires x86-64-v2: SSE4.2, POPCNT."
+    },
+    {
+      "id": "oracle-linux-10",
+      "name": "Oracle Linux 10",
+      "vendor": "Oracle",
+      "type": "server",
+      "releaseDate": "2025-07",
+      "eol": "2035-07",
+      "x86_64_level": 3,
+      "minRamGB": 1.5,
+      "minStorageGB": 10,
+      "additionalRequirements": {},
+      "requiredFeatures": [
+        "sse42",
+        "popcnt",
+        "avx",
+        "avx2",
+        "bmi1",
+        "bmi2",
+        "fma"
+      ],
+      "notes": "RHEL 10 compatible. Requires x86-64-v3: AVX, AVX2, BMI1, BMI2, FMA."
+    },
+    {
+      "id": "oracle-linux-9",
+      "name": "Oracle Linux 9",
+      "vendor": "Oracle",
+      "type": "server",
+      "releaseDate": "2022-07",
+      "eol": "2032-07",
+      "x86_64_level": 2,
+      "minRamGB": 1.5,
+      "minStorageGB": 10,
+      "additionalRequirements": {},
+      "requiredFeatures": [
+        "sse42",
+        "popcnt"
+      ],
+      "notes": "RHEL 9 compatible. Requires x86-64-v2: SSE4.2, POPCNT."
+    },
+    {
+      "id": "sles-15-sp7",
+      "name": "SUSE Linux Enterprise Server 15 SP7",
+      "vendor": "SUSE",
+      "type": "server",
+      "releaseDate": "2025-06",
+      "eol": "2031-07",
+      "x86_64_level": 1,
+      "minRamGB": 1,
+      "minStorageGB": 12,
+      "additionalRequirements": {},
+      "requiredFeatures": [],
+      "notes": "Basic x86-64 requirements. 1 GB RAM minimum for text mode, 1.5 GB recommended."
+    },
+    {
+      "id": "ubuntu-core-24",
+      "name": "Ubuntu Core 24",
+      "vendor": "Canonical",
+      "type": "iot",
+      "releaseDate": "2024-06",
+      "eol": "2036-06",
+      "x86_64_level": 1,
+      "minRamGB": 0.512,
+      "minStorageGB": 4,
+      "additionalRequirements": {},
+      "requiredFeatures": [],
+      "notes": "Minimal IoT/embedded OS. 512 MB RAM, 4 GB storage minimum. 12-year LTS support."
+    },
+    {
+      "id": "freebsd-14",
+      "name": "FreeBSD 14",
+      "vendor": "FreeBSD Project",
+      "type": "server",
+      "releaseDate": "2023-11",
+      "eol": "2028-11",
+      "x86_64_level": 1,
+      "minRamGB": 0.128,
+      "minStorageGB": 1.5,
+      "additionalRequirements": {},
+      "requiredFeatures": [],
+      "notes": "128 MB RAM minimum (more for GUI). Basic amd64 requirements. Very lightweight."
+    },
+    {
+      "id": "oracle-solaris-11.4",
+      "name": "Oracle Solaris 11.4",
+      "vendor": "Oracle",
+      "type": "server",
+      "releaseDate": "2018-08",
+      "eol": "2034-11",
+      "x86_64_level": 1,
+      "minRamGB": 2,
+      "minStorageGB": 13,
+      "additionalRequirements": {},
+      "requiredFeatures": [],
+      "notes": "Requires x86-64 CPU. 2 GB RAM minimum (4 GB recommended). Refer to Oracle HCL for certified hardware."
     }
   ]
 }

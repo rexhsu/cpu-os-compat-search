@@ -2,7 +2,7 @@
 
 **Live Demo: https://rexhsu.github.io/cpu-os-compat-search/**
 
-A static GitHub Pages web app to query CPU model compatibility with various operating systems (Windows, RHEL, Ubuntu, Debian, CentOS, Fedora). Checks x86-64 microarchitecture levels, CPU features, and Windows 11 whitelist requirements.
+A static GitHub Pages web app to query CPU model compatibility with various operating systems (Windows, RHEL, Ubuntu, Debian, CentOS, Fedora, Rocky Linux, Oracle Linux, SUSE SLES, FreeBSD, Oracle Solaris). Checks x86-64 microarchitecture levels, CPU features, and Windows 11 whitelist requirements.
 
 ## Features
 
@@ -12,7 +12,7 @@ A static GitHub Pages web app to query CPU model compatibility with various oper
 - x86-64 level (v1–v4) detection from instruction set extensions
 - Windows 11 CPU whitelist checking via Microsoft Learn data
 - TPM 2.0 support inference (Intel PTT 8th gen+, AMD fTPM Zen+)
-- 3,300+ Intel/AMD CPUs (including Ryzen Embedded V1000/R1000/V2000/R2000/V3000 series), 15 operating systems
+- 3,300+ Intel/AMD CPUs (including Ryzen Embedded V1000/R1000/V2000/R2000/V3000 series), 23 operating systems
 
 ## Supported Operating Systems
 
@@ -32,6 +32,14 @@ A static GitHub Pages web app to query CPU model compatibility with various oper
 | Debian 11 | v1 | 512 MB |
 | CentOS Stream 9 | v2 | 2 GB |
 | Fedora 41 | v1 | 2 GB |
+| Rocky Linux 10 | v3 | 1.5 GB |
+| Rocky Linux 9 | v2 | 1.5 GB |
+| Oracle Linux 10 | v3 | 1.5 GB |
+| Oracle Linux 9 | v2 | 1.5 GB |
+| SUSE SLES 15 SP7 | v1 | 1 GB |
+| Ubuntu Core 24 | v1 | 512 MB |
+| FreeBSD 14 | v1 | 128 MB |
+| Oracle Solaris 11.4 | v1 | 2 GB |
 
 ## Data Sources
 
@@ -43,6 +51,17 @@ A static GitHub Pages web app to query CPU model compatibility with various oper
 - **AMD Ryzen Embedded V3000 series**: [AMD V3000 Series](https://www.amd.com/en/products/embedded/ryzen/ryzen-v3000-series.html) · [AMD V3000 Product Brief (PDF)](https://www.amd.com/content/dam/amd/en/documents/products/embedded/ryzen/ryzen-embedded-v3000-series-product-brief.pdf)
 - **Win11 whitelist**: [Microsoft Learn](https://learn.microsoft.com/en-us/windows-hardware/design/minimum/supported/windows-11-supported-intel-processors)
 - **OS requirements**: Official documentation (manually curated)
+  - [Windows supported processors](https://aka.ms/CPUlist)
+  - [Ubuntu system requirements](https://help.ubuntu.com/community/Installation/SystemRequirements) · [Server](https://documentation.ubuntu.com/server/reference/installation/system-requirements/) · [Core](https://documentation.ubuntu.com/core/reference/system-requirements/)
+  - [Debian hardware requirements](https://www.debian.org/releases/stable/amd64/ch03s04.en.html)
+  - [RHEL architecture requirements](https://access.redhat.com/zh_CN/articles/3482381)
+  - [Rocky Linux minimum hardware](https://docs.rockylinux.org/10/guides/minimum_hardware_requirements/)
+  - [CentOS product info](https://wiki.centos.org/About/Product.html)
+  - [Fedora hardware overview](https://docs.fedoraproject.org/en-US/fedora/latest/release-notes/hardware_overview/)
+  - [Oracle Linux release notes](https://docs.oracle.com/en/operating-systems/oracle-linux/9/relnotes9.3/) · [HCL](https://linux.oracle.com/hardware-certifications)
+  - [SUSE SLES deployment guide](https://documentation.suse.com/sles/15-SP7/html/SLES-all/cha-x86.html) · [YES HW database](https://www.suse.com/yessearch/)
+  - [FreeBSD handbook](https://docs.freebsd.org/en/books/handbook/bsdinstall/) · [Release notes](https://www.freebsd.org/releases/)
+  - [Oracle Solaris HCL](https://www.oracle.com/webfolder/technetwork/hcl/index.html) · [Install guide](https://docs.oracle.com/cd/E37838_01/html/E60973/glmru.html)
 
 ## Development
 
