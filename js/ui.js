@@ -158,7 +158,7 @@ const UI = (() => {
     if (reqs.uefi) additionalItems.push('UEFI');
     if (reqs.secureBootCapable) additionalItems.push('Secure Boot');
     if (reqs.slat) additionalItems.push('SLAT');
-    if (reqs.win11CpuWhitelist) additionalItems.push('CPU Whitelist');
+    if (reqs.cpuWhitelist) additionalItems.push('CPU Whitelist');
 
     detailsEl.innerHTML = `
       <table class="table table-sm os-detail-table mb-0">

@@ -17,14 +17,16 @@ SCRIPTS = [
     "collect_os_requirements.py",
     "scrape_intel_cpus.py",
     "scrape_amd_cpus.py",
-    "scrape_win11_cpus.py",
+    "scrape_windows_cpu_whitelist.py",
 ]
 
 EXPECTED_FILES = [
     "os-requirements.json",
     "cpu-intel.json",
     "cpu-amd.json",
-    "windows11-supported-cpus.json",
+    "windows-cpu-whitelist-win10-22h2.json",
+    "windows-cpu-whitelist-win11-24h2.json",
+    "windows-cpu-whitelist-win11-25h2.json",
 ]
 
 
@@ -84,10 +86,11 @@ def validate_json(filename: str) -> bool:
         print(f"  OK: {filename} - {count} CPU entries")
         if count < 5:
             print(f"  WARN: Expected at least 5 CPU entries, got {count}")
-    elif filename == "windows11-supported-cpus.json":
+    elif filename.startswith("windows-cpu-whitelist-"):
         intel_count = len(data.get("intel", []))
         amd_count = len(data.get("amd", []))
-        print(f"  OK: {filename} - {intel_count} Intel + {amd_count} AMD entries")
+        qualcomm_count = len(data.get("qualcomm", []))
+        print(f"  OK: {filename} - {intel_count} Intel + {amd_count} AMD + {qualcomm_count} Qualcomm entries")
 
     return True
 

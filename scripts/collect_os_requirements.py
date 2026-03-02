@@ -20,7 +20,10 @@ OS_REQUIREMENTS = [
             "tpm2": True,
             "uefi": True,
             "secureBootCapable": True,
-            "win11CpuWhitelist": True
+            "cpuWhitelist": {
+                "dataFile": "windows-cpu-whitelist-win11-24h2.json",
+                "enforcement": "fail"
+            }
         },
         "requiredFeatures": ["sse42", "popcnt"],
         "notes": "Requires TPM 2.0, UEFI Secure Boot, and CPU must be on Microsoft's supported list."
@@ -39,7 +42,10 @@ OS_REQUIREMENTS = [
             "tpm2": True,
             "uefi": True,
             "secureBootCapable": True,
-            "win11CpuWhitelist": True
+            "cpuWhitelist": {
+                "dataFile": "windows-cpu-whitelist-win11-25h2.json",
+                "enforcement": "fail"
+            }
         },
         "requiredFeatures": ["sse42", "popcnt"],
         "notes": "Requires TPM 2.0, UEFI Secure Boot, and CPU must be on Microsoft's supported list."
@@ -54,9 +60,14 @@ OS_REQUIREMENTS = [
         "x86_64_level": 1,
         "minRamGB": 2,
         "minStorageGB": 32,
-        "additionalRequirements": {},
+        "additionalRequirements": {
+            "cpuWhitelist": {
+                "dataFile": "windows-cpu-whitelist-win10-22h2.json",
+                "enforcement": "fail"
+            }
+        },
         "requiredFeatures": [],
-        "notes": "End of support October 2025. Basic x86-64 requirements."
+        "notes": "End of support October 2025. CPU must be on Microsoft's supported list."
     },
     {
         "id": "windows-server-2025",

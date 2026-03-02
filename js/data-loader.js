@@ -6,7 +6,7 @@ const DataLoader = (() => {
   let amdCpus = [];
   let allCpus = [];
   let osRequirements = [];
-  let win11Whitelist = { intel: [], amd: [], qualcomm: [] };
+  let cpuWhitelists = new Map(); // dataFile -> { intel: [], amd: [], qualcomm: [] }
   let cpuIndex = new Map(); // id -> cpu
   let metadata = {};
 
@@ -17,22 +17,37 @@ const DataLoader = (() => {
   }
 
   async function loadAll() {
-    const [intelData, amdData, osData, win11Data] = await Promise.all([
+    const [intelData, amdData, osData] = await Promise.all([
       fetchJSON('data/cpu-intel.json'),
       fetchJSON('data/cpu-amd.json'),
       fetchJSON('data/os-requirements.json'),
-      fetchJSON('data/windows11-supported-cpus.json'),
     ]);
 
     intelCpus = intelData.cpus || [];
     amdCpus = amdData.cpus || [];
     allCpus = [...intelCpus, ...amdCpus];
     osRequirements = osData.operatingSystems || [];
-    win11Whitelist = {
-      intel: win11Data.intel || [],
-      amd: win11Data.amd || [],
-      qualcomm: win11Data.qualcomm || [],
-    };
+
+    // Discover and load all CPU whitelist files referenced by OS entries
+    const whitelistFiles = new Set();
+    for (const os of osRequirements) {
+      const wl = os.additionalRequirements?.cpuWhitelist;
+      if (wl?.dataFile) whitelistFiles.add(wl.dataFile);
+    }
+
+    const whitelistPromises = [...whitelistFiles].map(async (filename) => {
+      try {
+        const data = await fetchJSON(`data/${filename}`);
+        cpuWhitelists.set(filename, {
+          intel: data.intel || [],
+          amd: data.amd || [],
+          qualcomm: data.qualcomm || [],
+        });
+      } catch (err) {
+        console.warn(`Failed to load whitelist ${filename}:`, err);
+      }
+    });
+    await Promise.all(whitelistPromises);
 
     // Build index
     cpuIndex.clear();
@@ -48,7 +63,7 @@ const DataLoader = (() => {
       amdGenerated: amdData.metadata?.generated,
     };
 
-    return { allCpus, osRequirements, win11Whitelist, metadata };
+    return { allCpus, osRequirements, cpuWhitelists, metadata };
   }
 
   function getCpuById(id) {
@@ -63,13 +78,13 @@ const DataLoader = (() => {
     return osRequirements;
   }
 
-  function getWin11Whitelist() {
-    return win11Whitelist;
+  function getCpuWhitelist(dataFile) {
+    return cpuWhitelists.get(dataFile) || { intel: [], amd: [], qualcomm: [] };
   }
 
   function getMetadata() {
     return metadata;
   }
 
-  return { loadAll, getCpuById, getAllCpus, getOsRequirements, getWin11Whitelist, getMetadata };
+  return { loadAll, getCpuById, getAllCpus, getOsRequirements, getCpuWhitelist, getMetadata };
 })();

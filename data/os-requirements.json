@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated": "2026-03-02T07:50:35Z",
+    "generated": "2026-03-02T08:03:54Z",
     "source": "Manual curation from official OS documentation",
     "count": 23
   },
@@ -19,7 +19,10 @@
         "tpm2": true,
         "uefi": true,
         "secureBootCapable": true,
-        "win11CpuWhitelist": true
+        "cpuWhitelist": {
+          "dataFile": "windows-cpu-whitelist-win11-24h2.json",
+          "enforcement": "fail"
+        }
       },
       "requiredFeatures": [
         "sse42",
@@ -41,7 +44,10 @@
         "tpm2": true,
         "uefi": true,
         "secureBootCapable": true,
-        "win11CpuWhitelist": true
+        "cpuWhitelist": {
+          "dataFile": "windows-cpu-whitelist-win11-25h2.json",
+          "enforcement": "fail"
+        }
       },
       "requiredFeatures": [
         "sse42",
@@ -59,9 +65,14 @@
       "x86_64_level": 1,
       "minRamGB": 2,
       "minStorageGB": 32,
-      "additionalRequirements": {},
+      "additionalRequirements": {
+        "cpuWhitelist": {
+          "dataFile": "windows-cpu-whitelist-win10-22h2.json",
+          "enforcement": "fail"
+        }
+      },
       "requiredFeatures": [],
-      "notes": "End of support October 2025. Basic x86-64 requirements."
+      "notes": "End of support October 2025. CPU must be on Microsoft's supported list."
     },
     {
       "id": "windows-server-2025",

@@ -4,10 +4,10 @@
 const SearchEngine = (() => {
 
   /**
-   * Check if a CPU is on the Windows 11 supported list.
+   * Check if a CPU is on a Windows supported CPU list.
    */
-  function isOnWin11Whitelist(cpu) {
-    const whitelist = DataLoader.getWin11Whitelist();
+  function isOnCpuWhitelist(cpu, dataFile) {
+    const whitelist = DataLoader.getCpuWhitelist(dataFile);
     if (cpu.vendor === 'intel') return matchesIntelWhitelist(cpu, whitelist.intel);
     if (cpu.vendor === 'amd') return matchesAmdWhitelist(cpu, whitelist.amd);
     return false;
@@ -191,11 +191,12 @@ const SearchEngine = (() => {
       reasons.push('TPM 2.0 required (may need discrete TPM module)');
     }
 
-    // Check Windows 11 CPU whitelist (strict — no fallback heuristic)
-    if (os.additionalRequirements?.win11CpuWhitelist) {
-      if (!isOnWin11Whitelist(cpu)) {
+    // CPU Whitelist check (strict — no fallback heuristic)
+    const cpuWl = os.additionalRequirements?.cpuWhitelist;
+    if (cpuWl) {
+      if (!isOnCpuWhitelist(cpu, cpuWl.dataFile)) {
         status = 'fail';
-        reasons.push('Not on Windows 11 supported CPU list');
+        reasons.push(`Not on ${os.name} supported CPU list`);
       }
     }
 
@@ -366,18 +367,19 @@ const SearchEngine = (() => {
       }
     }
 
-    // Win11 CPU Whitelist check (strict — no fallback heuristic)
-    if (os.additionalRequirements?.win11CpuWhitelist) {
-      if (isOnWin11Whitelist(cpu)) {
-        checks.push({ name: 'Win11 CPU Whitelist', status: 'pass', detail: 'CPU is on supported list' });
+    // CPU Whitelist check (strict — no fallback heuristic)
+    const cpuWl = os.additionalRequirements?.cpuWhitelist;
+    if (cpuWl) {
+      if (isOnCpuWhitelist(cpu, cpuWl.dataFile)) {
+        checks.push({ name: 'CPU Whitelist', status: 'pass', detail: `CPU is on ${os.name} supported list` });
       } else {
         overall = 'fail';
-        checks.push({ name: 'Win11 CPU Whitelist', status: 'fail', detail: 'Not on Windows 11 supported CPU list' });
+        checks.push({ name: 'CPU Whitelist', status: 'fail', detail: `Not on ${os.name} supported CPU list` });
       }
     }
 
     return { overall, checks };
   }
 
-  return { checkCompatibility, findCompatibleOs, findCompatibleCpus, searchCpus, isOnWin11Whitelist, detailedCheck };
+  return { checkCompatibility, findCompatibleOs, findCompatibleCpus, searchCpus, isOnCpuWhitelist, detailedCheck };
 })();
