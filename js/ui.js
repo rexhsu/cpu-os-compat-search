@@ -84,13 +84,19 @@ const UI = (() => {
   /**
    * Render OS compatibility results for a CPU.
    */
-  function renderCpuCompatResults(results) {
+  function renderCpuCompatResults(results, onOsClick) {
     const container = document.getElementById('cpu-compat-results');
     container.innerHTML = '';
 
     for (const result of results) {
       const card = document.createElement('div');
       card.className = `card compat-card compat-${result.status} mb-2`;
+
+      if (onOsClick) {
+        card.style.cursor = 'pointer';
+        card.title = 'View detailed compatibility';
+        card.addEventListener('click', () => onOsClick(result.os));
+      }
 
       const statusIcon = result.status === 'pass' ? 'bi-check-circle-fill' :
                           result.status === 'fail' ? 'bi-x-circle-fill' : 'bi-exclamation-triangle-fill';
@@ -184,7 +190,7 @@ const UI = (() => {
   /**
    * Render compatible CPU list for an OS.
    */
-  function renderOsCompatResults(results, filterText = '') {
+  function renderOsCompatResults(results, filterText = '', onCpuClick) {
     const container = document.getElementById('os-compat-results');
     const countEl = document.getElementById('os-cpu-count');
     container.innerHTML = '';
@@ -219,6 +225,12 @@ const UI = (() => {
     for (const result of toShow) {
       const item = document.createElement('div');
       item.className = 'cpu-list-item';
+
+      if (onCpuClick) {
+        item.style.cursor = 'pointer';
+        item.title = 'View detailed compatibility';
+        item.addEventListener('click', () => onCpuClick(result.cpu));
+      }
       const levelClass = `badge-level-${result.cpu.x86_64_level}`;
       const statusIcon = result.status === 'pass' ? 'text-success' : 'text-warning';
       item.innerHTML = `

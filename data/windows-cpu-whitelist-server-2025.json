@@ -1,0 +1,41 @@
+{
+  "metadata": {
+    "generated": "2026-03-02T09:32:26Z",
+    "source": "Microsoft Learn - Windows Server 2025 processor requirements (manually curated)",
+    "sourceUrl": "https://learn.microsoft.com/en-us/windows-hardware/design/minimum/windows-processor-requirements",
+    "counts": {
+      "intel": 17,
+      "amd": 7,
+      "qualcomm": 0
+    }
+  },
+  "intel": [
+    "2nd Generation Xeon Scalable Processors",
+    "3rd Generation Xeon Scalable Processors",
+    "4th Generation Xeon Scalable Processors",
+    "5th Generation Xeon Scalable Processors",
+    "Pentium G7400 Series",
+    "Xeon 6300P Series",
+    "Xeon 6500P Series",
+    "Xeon 6700E Series",
+    "Xeon 6700P Series",
+    "Xeon 6900P Series",
+    "Xeon D-1700 Series",
+    "Xeon D-1800 Series",
+    "Xeon D-2100 Series",
+    "Xeon D-2700 Series",
+    "Xeon D-2800 Series",
+    "Xeon E-2300 Series",
+    "Xeon E-2400 Series"
+  ],
+  "amd": [
+    "EPYC 4004 Series",
+    "EPYC 4005 Series",
+    "EPYC 7002 Series",
+    "EPYC 7003 Series",
+    "EPYC 8004 Series",
+    "EPYC 9004 Series",
+    "EPYC 9005 Series"
+  ],
+  "qualcomm": []
+}

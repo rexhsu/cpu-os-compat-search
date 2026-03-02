@@ -5,6 +5,7 @@
   'use strict';
 
   let currentOsResults = null;
+  let cpuOsNav = null;
 
   document.addEventListener('DOMContentLoaded', async () => {
     const loadingEl = document.getElementById('loading');
@@ -134,10 +135,14 @@
   }
 
   function bindCpuSearch() {
+    let currentCpu = null;
     setupCpuAutocomplete('cpu-search', 'cpu-autocomplete', (cpu) => {
+      currentCpu = cpu;
       UI.renderCpuInfo(cpu);
       const results = SearchEngine.findCompatibleOs(cpu.id);
-      UI.renderCpuCompatResults(results);
+      UI.renderCpuCompatResults(results, (os) => {
+        if (cpuOsNav) cpuOsNav.navigate(currentCpu, os);
+      });
     });
   }
 
@@ -176,16 +181,34 @@
       const resultEl = document.getElementById('cpuos-result');
       if (resultEl) resultEl.innerHTML = '';
     });
+
+    // Expose navigation for cross-tab linking
+    cpuOsNav = {
+      navigate(cpu, os) {
+        selectedCpu = cpu;
+        selectedOs = os;
+        cpuAc.input.value = cpu.name;
+        osAc.input.value = os.name;
+        new bootstrap.Tab(document.getElementById('cpuos-tab')).show();
+        tryRender();
+      }
+    };
   }
 
   function bindOsSelect() {
+    let currentOs = null;
     const filterInput = document.getElementById('os-cpu-filter');
 
+    function cpuClickHandler(cpu) {
+      if (cpuOsNav && currentOs) cpuOsNav.navigate(cpu, currentOs);
+    }
+
     setupOsAutocomplete('os-search', 'os-autocomplete', (os) => {
+      currentOs = os;
       UI.renderOsInfo(os);
       currentOsResults = SearchEngine.findCompatibleCpus(os.id);
       filterInput.value = '';
-      UI.renderOsCompatResults(currentOsResults);
+      UI.renderOsCompatResults(currentOsResults, '', cpuClickHandler);
     });
 
     let filterTimer = null;
@@ -193,7 +216,7 @@
       clearTimeout(filterTimer);
       filterTimer = setTimeout(() => {
         if (currentOsResults) {
-          UI.renderOsCompatResults(currentOsResults, filterInput.value.trim());
+          UI.renderOsCompatResults(currentOsResults, filterInput.value.trim(), cpuClickHandler);
         }
       }, 200);
     });

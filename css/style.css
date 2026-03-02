@@ -1,5 +1,5 @@
-/* Autocomplete wrapper – establish stacking context above siblings */
-.position-relative:has(.autocomplete-dropdown) {
+/* Autocomplete wrapper – only raise z-index when dropdown is actually open */
+.position-relative:has(.autocomplete-dropdown:not(.d-none)) {
   z-index: 10;
 }
 
@@ -164,6 +164,10 @@
 
 .cpu-list-item:last-child {
   border-bottom: none;
+}
+
+.cpu-list-item:hover {
+  background-color: #f0f0f0;
 }
 
 /* CPU+OS detailed report */

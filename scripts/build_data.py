@@ -18,6 +18,7 @@ SCRIPTS = [
     "scrape_intel_cpus.py",
     "scrape_amd_cpus.py",
     "scrape_windows_cpu_whitelist.py",
+    "generate_server_cpu_whitelist.py",
 ]
 
 EXPECTED_FILES = [
@@ -30,6 +31,9 @@ EXPECTED_FILES = [
     "windows-cpu-whitelist-win11-22h2.json",
     "windows-cpu-whitelist-win11-24h2.json",
     "windows-cpu-whitelist-win11-25h2.json",
+    "windows-cpu-whitelist-server-2019.json",
+    "windows-cpu-whitelist-server-2022.json",
+    "windows-cpu-whitelist-server-2025.json",
 ]
 
 

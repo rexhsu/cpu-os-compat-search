@@ -163,10 +163,14 @@ OS_REQUIREMENTS = [
         "minRamGBDesktop": 2,
         "minStorageGB": 32,
         "additionalRequirements": {
-            "slat": True
+            "slat": True,
+            "cpuWhitelist": {
+                "dataFile": "windows-cpu-whitelist-server-2025.json",
+                "enforcement": "fail"
+            }
         },
         "requiredFeatures": ["sse42", "popcnt"],
-        "notes": "512 MB RAM (Core), 2 GB (Desktop Experience). Requires SLAT (Second Level Address Translation)."
+        "notes": "512 MB RAM (Core), 2 GB (Desktop Experience). Requires SLAT. CPU must be on Microsoft's supported list."
     },
     {
         "id": "windows-server-2022",
@@ -180,10 +184,14 @@ OS_REQUIREMENTS = [
         "minRamGBDesktop": 2,
         "minStorageGB": 32,
         "additionalRequirements": {
-            "slat": True
+            "slat": True,
+            "cpuWhitelist": {
+                "dataFile": "windows-cpu-whitelist-server-2022.json",
+                "enforcement": "fail"
+            }
         },
         "requiredFeatures": [],
-        "notes": "512 MB RAM (Core), 2 GB (Desktop Experience). Requires SLAT."
+        "notes": "512 MB RAM (Core), 2 GB (Desktop Experience). Requires SLAT. CPU must be on Microsoft's supported list."
     },
     {
         "id": "windows-server-2019",
@@ -196,9 +204,14 @@ OS_REQUIREMENTS = [
         "minRamGB": 0.5,
         "minRamGBDesktop": 2,
         "minStorageGB": 32,
-        "additionalRequirements": {},
+        "additionalRequirements": {
+            "cpuWhitelist": {
+                "dataFile": "windows-cpu-whitelist-server-2019.json",
+                "enforcement": "fail"
+            }
+        },
         "requiredFeatures": [],
-        "notes": "512 MB RAM (Core), 2 GB (Desktop Experience)."
+        "notes": "512 MB RAM (Core), 2 GB (Desktop Experience). CPU must be on Microsoft's supported list."
     },
     {
         "id": "rhel-10",

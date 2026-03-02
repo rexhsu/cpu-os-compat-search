@@ -25,6 +25,7 @@ const SearchEngine = (() => {
     const cpuProc = (cpu.processorNumber || '').toLowerCase().trim();
     if (!cpuProc) return false;
 
+    const cpuName = cpu.name.toLowerCase();
     // Normalize: remove ™/® symbols and extra spaces
     const cpuProcClean = cpuProc.replace(/[™®]/g, '').replace(/\s+/g, ' ').trim();
     const procTokens = cpuProcClean.split(' ');
@@ -33,6 +34,23 @@ const SearchEngine = (() => {
     for (const entry of entries) {
       const e = entry.toLowerCase().trim();
       const entryTokens = e.split(/\s+/);
+
+      // "Ryzen Family" — matches any Ryzen processor
+      if (/^(?:amd\s+)?ryzen\s+family$/.test(e)) {
+        if (cpuName.includes('ryzen')) return true;
+        continue;
+      }
+
+      // EPYC generation: "EPYC N00M Series" or bare "N00M Series"
+      // N = family digit, M = generation digit (e.g., 9004 = EPYC 9xx4 Genoa)
+      // Matches EPYC CPUs where model first digit = N and last numeric digit = M
+      const epycGen = e.match(/^(?:epyc\s+)?(\d)00(\d)\s+series$/);
+      if (epycGen && cpuName.includes('epyc')) {
+        const numOnly = lastToken.replace(/[^0-9]/g, '');
+        if (numOnly.length >= 3 && numOnly[0] === epycGen[1] && numOnly[numOnly.length - 1] === epycGen[2]) {
+          return true;
+        }
+      }
 
       // Suffix match: entry matches the last N tokens of processorNumber
       // "Gold 3150C" matches "amd athlon gold 3150c" (last 2 tokens)
