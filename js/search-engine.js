@@ -388,11 +388,18 @@ const SearchEngine = (() => {
     // CPU Whitelist check (strict — no fallback heuristic)
     const cpuWl = os.additionalRequirements?.cpuWhitelist;
     if (cpuWl) {
+      const whitelist = DataLoader.getCpuWhitelist(cpuWl.dataFile);
+      let sourceUrl = whitelist?.metadata?.sourceUrl;
+      if (!sourceUrl) {
+        if (cpu.vendor === 'intel') sourceUrl = whitelist?.metadata?.intelUrl;
+        else if (cpu.vendor === 'amd') sourceUrl = whitelist?.metadata?.amdUrl;
+      }
+
       if (isOnCpuWhitelist(cpu, cpuWl.dataFile)) {
-        checks.push({ name: 'CPU Whitelist', status: 'pass', detail: `CPU is on ${os.name} supported list` });
+        checks.push({ name: 'CPU Whitelist', status: 'pass', detail: `CPU is on ${os.name} supported list`, url: sourceUrl });
       } else {
         overall = 'fail';
-        checks.push({ name: 'CPU Whitelist', status: 'fail', detail: `Not on ${os.name} supported CPU list` });
+        checks.push({ name: 'CPU Whitelist', status: 'fail', detail: `Not on ${os.name} supported CPU list`, url: sourceUrl });
       }
     }
 

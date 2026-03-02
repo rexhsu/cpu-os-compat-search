@@ -291,11 +291,12 @@ const UI = (() => {
                    c.status === 'fail' ? 'bi-x-circle-fill text-danger' :
                    c.status === 'warn' ? 'bi-exclamation-triangle-fill text-warning' :
                    'bi-dash-circle text-muted';
+      const urlHtml = c.url ? ` <a href="${escapeHtml(c.url)}" target="_blank" rel="noopener" class="small ms-1"><i class="bi bi-box-arrow-up-right"></i> Microsoft Source</a>` : '';
       return `
         <tr class="detail-check-row">
           <td><i class="bi ${icon}"></i></td>
           <td class="fw-semibold">${escapeHtml(c.name)}</td>
-          <td class="text-muted">${escapeHtml(c.detail)}</td>
+          <td class="text-muted">${escapeHtml(c.detail)}${urlHtml}</td>
         </tr>`;
     }).join('');
 
