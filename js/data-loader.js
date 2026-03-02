@@ -42,6 +42,7 @@ const DataLoader = (() => {
           intel: data.intel || [],
           amd: data.amd || [],
           qualcomm: data.qualcomm || [],
+          metadata: data.metadata || {},
         });
       } catch (err) {
         console.warn(`Failed to load whitelist ${filename}:`, err);
