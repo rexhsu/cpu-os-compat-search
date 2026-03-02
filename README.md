@@ -1,5 +1,7 @@
 # CPU / OS Compatibility Search
 
+**Live Demo: https://rexhsu.github.io/cpu-os-compat-search/**
+
 A static GitHub Pages web app to query CPU model compatibility with various operating systems (Windows, RHEL, Ubuntu, Debian, CentOS, Fedora). Checks x86-64 microarchitecture levels, CPU features, and Windows 11 whitelist requirements.
 
 ## Features
