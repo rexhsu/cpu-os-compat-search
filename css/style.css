@@ -161,16 +161,6 @@
   border-bottom: none;
 }
 
-/* CPU+OS tab: keep OS select above the autocomplete overlay */
-#cpuos-pane .position-relative {
-  z-index: 1;
-}
-
-#cpuos-pane .position-relative + .mb-3 {
-  position: relative;
-  z-index: 2;
-}
-
 /* CPU+OS detailed report */
 .verdict-box {
   display: flex;
