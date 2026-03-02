@@ -24,6 +24,41 @@ def _core_i3_gens(start, end):
 
 
 SERVER_WHITELISTS = {
+    "server-2016": {
+        "label": "Windows Server 2016",
+        "intel": [
+            # Core i3 up through 9th generation
+            *_core_i3_gens(1, 9),
+            # Pentium
+            "Pentium G5000 Series",
+            # Celeron
+            "Celeron G4900 Series",
+            # Xeon Scalable (1st through 3rd gen — SP 32xx, 43xx, 53xx, 63xx, 83xx)
+            "1st Generation Xeon Scalable Processors",
+            "2nd Generation Xeon Scalable Processors",
+            "3rd Generation Xeon Scalable Processors",
+            # Xeon E series (E-2100 through E-2200)
+            "Xeon E-2100 Series",
+            "Xeon E-2200 Series",
+            # Xeon D series
+            "Xeon D-1500 Series",
+            "Xeon D-2100 Series",
+            # Atom
+            "Atom C3300 Series",
+        ],
+        "amd": [
+            # Legacy AMD families (7th gen)
+            "A9-9000 Series",
+            "E2-9000 Series",
+            "FX-9000 Series",
+            # Ryzen (all families)
+            "Ryzen Family",
+            # EPYC generations (up through 7003)
+            "EPYC 7001 Series",
+            "EPYC 7002 Series",
+            "EPYC 7003 Series",
+        ],
+    },
     "server-2019": {
         "label": "Windows Server 2019",
         "intel": [

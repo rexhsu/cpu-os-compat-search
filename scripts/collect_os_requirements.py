@@ -162,9 +162,14 @@ OS_REQUIREMENTS = [
         "minRamGB": 0.5,
         "minRamGBDesktop": 2,
         "minStorageGB": 32,
-        "additionalRequirements": {},
+        "additionalRequirements": {
+            "cpuWhitelist": {
+                "dataFile": "windows-cpu-whitelist-server-2016.json",
+                "enforcement": "fail"
+            }
+        },
         "requiredFeatures": [],
-        "notes": "512 MB RAM (Core), 2 GB (Desktop Experience). Extended Support until January 2027."
+        "notes": "512 MB RAM (Core), 2 GB (Desktop Experience). Extended Support until January 2027. CPU must be on Microsoft's supported list."
     },
     # ── Red Hat Family ────────────────────────────────────────────────
     {

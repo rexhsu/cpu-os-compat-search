@@ -31,6 +31,7 @@ EXPECTED_FILES = [
     "windows-cpu-whitelist-win11-22h2.json",
     "windows-cpu-whitelist-win11-24h2.json",
     "windows-cpu-whitelist-win11-25h2.json",
+    "windows-cpu-whitelist-server-2016.json",
     "windows-cpu-whitelist-server-2019.json",
     "windows-cpu-whitelist-server-2022.json",
     "windows-cpu-whitelist-server-2025.json",
