@@ -6,50 +6,7 @@ import os
 from datetime import datetime, timezone
 
 OS_REQUIREMENTS = [
-    {
-        "id": "windows-11-22h2",
-        "name": "Windows 11 22H2",
-        "vendor": "Microsoft",
-        "type": "desktop",
-        "releaseDate": "2022-09",
-        "eol": "2025-10",
-        "x86_64_level": 2,
-        "minRamGB": 4,
-        "minStorageGB": 64,
-        "additionalRequirements": {
-            "tpm2": True,
-            "uefi": True,
-            "secureBootCapable": True,
-            "cpuWhitelist": {
-                "dataFile": "windows-cpu-whitelist-win11-22h2.json",
-                "enforcement": "fail"
-            }
-        },
-        "requiredFeatures": ["sse42", "popcnt"],
-        "notes": "Requires TPM 2.0, UEFI Secure Boot, and CPU must be on Microsoft's supported list."
-    },
-    {
-        "id": "windows-11-23h2",
-        "name": "Windows 11 23H2",
-        "vendor": "Microsoft",
-        "type": "desktop",
-        "releaseDate": "2023-10",
-        "eol": "2025-11",
-        "x86_64_level": 2,
-        "minRamGB": 4,
-        "minStorageGB": 64,
-        "additionalRequirements": {
-            "tpm2": True,
-            "uefi": True,
-            "secureBootCapable": True,
-            "cpuWhitelist": {
-                "dataFile": "windows-cpu-whitelist-win11-22h2.json",
-                "enforcement": "fail"
-            }
-        },
-        "requiredFeatures": ["sse42", "popcnt"],
-        "notes": "Requires TPM 2.0, UEFI Secure Boot, and CPU must be on Microsoft's supported list. Shares CPU list with 22H2."
-    },
+    # ── Windows Desktop ──────────────────────────────────────────────
     {
         "id": "windows-11-24h2",
         "name": "Windows 11 24H2",
@@ -93,25 +50,6 @@ OS_REQUIREMENTS = [
         },
         "requiredFeatures": ["sse42", "popcnt"],
         "notes": "Requires TPM 2.0, UEFI Secure Boot, and CPU must be on Microsoft's supported list."
-    },
-    {
-        "id": "windows-10-22h2",
-        "name": "Windows 10 22H2",
-        "vendor": "Microsoft",
-        "type": "desktop",
-        "releaseDate": "2022-10",
-        "eol": "2025-10",
-        "x86_64_level": 1,
-        "minRamGB": 2,
-        "minStorageGB": 32,
-        "additionalRequirements": {
-            "cpuWhitelist": {
-                "dataFile": "windows-cpu-whitelist-win10-22h2.json",
-                "enforcement": "fail"
-            }
-        },
-        "requiredFeatures": [],
-        "notes": "End of support October 2025. CPU must be on Microsoft's supported list."
     },
     {
         "id": "windows-10-ltsc-2021",
@@ -214,6 +152,22 @@ OS_REQUIREMENTS = [
         "notes": "512 MB RAM (Core), 2 GB (Desktop Experience). CPU must be on Microsoft's supported list."
     },
     {
+        "id": "windows-server-2016",
+        "name": "Windows Server 2016",
+        "vendor": "Microsoft",
+        "type": "server",
+        "releaseDate": "2016-10",
+        "eol": "2027-01",
+        "x86_64_level": 1,
+        "minRamGB": 0.5,
+        "minRamGBDesktop": 2,
+        "minStorageGB": 32,
+        "additionalRequirements": {},
+        "requiredFeatures": [],
+        "notes": "512 MB RAM (Core), 2 GB (Desktop Experience). Extended Support until January 2027."
+    },
+    # ── Red Hat Family ────────────────────────────────────────────────
+    {
         "id": "rhel-10",
         "name": "Red Hat Enterprise Linux 10",
         "vendor": "Red Hat",
@@ -286,6 +240,20 @@ OS_REQUIREMENTS = [
         "notes": "4 GB RAM (Desktop), 1 GB (Server minimal)."
     },
     {
+        "id": "debian-13",
+        "name": "Debian 13 (Trixie)",
+        "vendor": "Debian",
+        "type": "server",
+        "releaseDate": "2025-08",
+        "eol": "2030-06",
+        "x86_64_level": 1,
+        "minRamGB": 0.5,
+        "minStorageGB": 10,
+        "additionalRequirements": {},
+        "requiredFeatures": [],
+        "notes": "512 MB RAM minimum. Current Debian stable release."
+    },
+    {
         "id": "debian-12",
         "name": "Debian 12 (Bookworm)",
         "vendor": "Debian",
@@ -297,21 +265,21 @@ OS_REQUIREMENTS = [
         "minStorageGB": 10,
         "additionalRequirements": {},
         "requiredFeatures": [],
-        "notes": "512 MB RAM minimum. Very lightweight requirements."
+        "notes": "512 MB RAM minimum."
     },
     {
-        "id": "debian-11",
-        "name": "Debian 11 (Bullseye)",
-        "vendor": "Debian",
+        "id": "centos-stream-10",
+        "name": "CentOS Stream 10",
+        "vendor": "Red Hat",
         "type": "server",
-        "releaseDate": "2021-08",
-        "eol": "2026-08",
-        "x86_64_level": 1,
-        "minRamGB": 0.5,
+        "releaseDate": "2024-12",
+        "eol": "2030-12",
+        "x86_64_level": 3,
+        "minRamGB": 1.5,
         "minStorageGB": 10,
         "additionalRequirements": {},
-        "requiredFeatures": [],
-        "notes": "512 MB RAM minimum."
+        "requiredFeatures": ["sse42", "popcnt", "avx", "avx2", "bmi1", "bmi2", "fma"],
+        "notes": "Requires x86-64-v3. Rolling-release ahead of RHEL 10."
     },
     {
         "id": "centos-stream-9",
@@ -328,18 +296,32 @@ OS_REQUIREMENTS = [
         "notes": "Requires x86-64-v2. Rolling-release ahead of RHEL 9."
     },
     {
-        "id": "fedora-41",
-        "name": "Fedora 41",
-        "vendor": "Red Hat",
+        "id": "fedora-43",
+        "name": "Fedora 43",
+        "vendor": "Fedora Project",
         "type": "desktop",
-        "releaseDate": "2024-10",
-        "eol": "2025-11",
+        "releaseDate": "2025-10",
+        "eol": "2026-12",
         "x86_64_level": 1,
         "minRamGB": 2,
         "minStorageGB": 20,
         "additionalRequirements": {},
         "requiredFeatures": [],
-        "notes": "Basic x86-64 requirements. Short support cycle."
+        "notes": "Basic x86-64 requirements. Short support cycle (~13 months)."
+    },
+    {
+        "id": "fedora-42",
+        "name": "Fedora 42",
+        "vendor": "Fedora Project",
+        "type": "desktop",
+        "releaseDate": "2025-04",
+        "eol": "2026-05",
+        "x86_64_level": 1,
+        "minRamGB": 2,
+        "minStorageGB": 20,
+        "additionalRequirements": {},
+        "requiredFeatures": [],
+        "notes": "Basic x86-64 requirements. Short support cycle (~13 months)."
     },
     {
         "id": "rocky-10",
@@ -370,6 +352,64 @@ OS_REQUIREMENTS = [
         "notes": "RHEL 9 compatible rebuild. Requires x86-64-v2: SSE4.2, POPCNT."
     },
     {
+        "id": "rocky-8",
+        "name": "Rocky Linux 8",
+        "vendor": "Rocky Enterprise Software Foundation",
+        "type": "server",
+        "releaseDate": "2021-06",
+        "eol": "2029-05",
+        "x86_64_level": 1,
+        "minRamGB": 2,
+        "minStorageGB": 10,
+        "additionalRequirements": {},
+        "requiredFeatures": [],
+        "notes": "RHEL 8 compatible rebuild. Security support only."
+    },
+    # ── AlmaLinux ──────────────────────────────────────────────────────
+    {
+        "id": "almalinux-10",
+        "name": "AlmaLinux 10",
+        "vendor": "AlmaLinux OS Foundation",
+        "type": "server",
+        "releaseDate": "2025-05",
+        "eol": "2035-05",
+        "x86_64_level": 3,
+        "minRamGB": 1.5,
+        "minStorageGB": 10,
+        "additionalRequirements": {},
+        "requiredFeatures": ["sse42", "popcnt", "avx", "avx2", "bmi1", "bmi2", "fma"],
+        "notes": "RHEL 10 compatible rebuild. Requires x86-64-v3. Also provides x86-64-v2 as separate architecture."
+    },
+    {
+        "id": "almalinux-9",
+        "name": "AlmaLinux 9",
+        "vendor": "AlmaLinux OS Foundation",
+        "type": "server",
+        "releaseDate": "2022-05",
+        "eol": "2032-05",
+        "x86_64_level": 2,
+        "minRamGB": 1.5,
+        "minStorageGB": 10,
+        "additionalRequirements": {},
+        "requiredFeatures": ["sse42", "popcnt"],
+        "notes": "RHEL 9 compatible rebuild. Requires x86-64-v2."
+    },
+    {
+        "id": "almalinux-8",
+        "name": "AlmaLinux 8",
+        "vendor": "AlmaLinux OS Foundation",
+        "type": "server",
+        "releaseDate": "2021-03",
+        "eol": "2029-03",
+        "x86_64_level": 1,
+        "minRamGB": 2,
+        "minStorageGB": 10,
+        "additionalRequirements": {},
+        "requiredFeatures": [],
+        "notes": "RHEL 8 compatible rebuild. Security support only."
+    },
+    # ── Oracle Linux ──────────────────────────────────────────────────
+    {
         "id": "oracle-linux-10",
         "name": "Oracle Linux 10",
         "vendor": "Oracle",
@@ -398,6 +438,21 @@ OS_REQUIREMENTS = [
         "notes": "RHEL 9 compatible. Requires x86-64-v2: SSE4.2, POPCNT."
     },
     {
+        "id": "oracle-linux-8",
+        "name": "Oracle Linux 8",
+        "vendor": "Oracle",
+        "type": "server",
+        "releaseDate": "2019-07",
+        "eol": "2029-07",
+        "x86_64_level": 1,
+        "minRamGB": 2,
+        "minStorageGB": 10,
+        "additionalRequirements": {},
+        "requiredFeatures": [],
+        "notes": "RHEL 8 compatible. Premier Support until July 2029."
+    },
+    # ── SUSE / openSUSE ──────────────────────────────────────────────
+    {
         "id": "sles-15-sp7",
         "name": "SUSE Linux Enterprise Server 15 SP7",
         "vendor": "SUSE",
@@ -412,6 +467,21 @@ OS_REQUIREMENTS = [
         "notes": "Basic x86-64 requirements. 1 GB RAM minimum for text mode, 1.5 GB recommended."
     },
     {
+        "id": "opensuse-leap-16",
+        "name": "openSUSE Leap 16",
+        "vendor": "openSUSE",
+        "type": "desktop",
+        "releaseDate": "2025-10",
+        "eol": "2027-10",
+        "x86_64_level": 2,
+        "minRamGB": 1,
+        "minStorageGB": 12,
+        "additionalRequirements": {},
+        "requiredFeatures": ["sse42", "popcnt"],
+        "notes": "Requires x86-64-v2. Community edition of SUSE Linux Enterprise."
+    },
+    # ── Debian / Ubuntu ──────────────────────────────────────────────
+    {
         "id": "ubuntu-core-24",
         "name": "Ubuntu Core 24",
         "vendor": "Canonical",
@@ -424,6 +494,21 @@ OS_REQUIREMENTS = [
         "additionalRequirements": {},
         "requiredFeatures": [],
         "notes": "Minimal IoT/embedded OS. 512 MB RAM, 4 GB storage minimum. 12-year LTS support."
+    },
+    # ── BSD / Unix ────────────────────────────────────────────────────
+    {
+        "id": "freebsd-15",
+        "name": "FreeBSD 15",
+        "vendor": "FreeBSD Project",
+        "type": "server",
+        "releaseDate": "2025-12",
+        "eol": "2029-12",
+        "x86_64_level": 1,
+        "minRamGB": 0.128,
+        "minStorageGB": 1.5,
+        "additionalRequirements": {},
+        "requiredFeatures": [],
+        "notes": "128 MB RAM minimum (more for GUI). Basic amd64 requirements."
     },
     {
         "id": "freebsd-14",
@@ -452,7 +537,36 @@ OS_REQUIREMENTS = [
         "additionalRequirements": {},
         "requiredFeatures": [],
         "notes": "Requires x86-64 CPU. 2 GB RAM minimum (4 GB recommended). Refer to Oracle HCL for certified hardware."
-    }
+    },
+    # ── Hypervisors ──────────────────────────────────────────────────
+    {
+        "id": "vmware-esxi-8",
+        "name": "VMware ESXi 8",
+        "vendor": "Broadcom",
+        "type": "hypervisor",
+        "releaseDate": "2022-10",
+        "eol": "2029-10",
+        "x86_64_level": 1,
+        "minRamGB": 8,
+        "minStorageGB": 32,
+        "additionalRequirements": {},
+        "requiredFeatures": [],
+        "notes": "Requires hardware virtualization (Intel VT-x / AMD-V) and NX/XD bit. 8 GB RAM minimum. Consult VMware HCL for certified hardware."
+    },
+    {
+        "id": "proxmox-ve-9",
+        "name": "Proxmox VE 9",
+        "vendor": "Proxmox",
+        "type": "hypervisor",
+        "releaseDate": "2025-08",
+        "eol": "2028-08",
+        "x86_64_level": 1,
+        "minRamGB": 2,
+        "minStorageGB": 32,
+        "additionalRequirements": {},
+        "requiredFeatures": [],
+        "notes": "Based on Debian 13. Requires hardware virtualization (Intel VT-x / AMD-V). 2 GB RAM minimum, 8+ GB recommended."
+    },
 ]
 
 
