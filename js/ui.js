@@ -256,13 +256,108 @@ const UI = (() => {
     return div.innerHTML;
   }
 
+  /**
+   * Populate the CPU+OS tab's OS select dropdown.
+   */
+  function populateCpuOsOsSelect(osList) {
+    const select = document.getElementById('cpuos-os-select');
+    const groups = {};
+    for (const os of osList) {
+      const vendor = os.vendor || 'Other';
+      if (!groups[vendor]) groups[vendor] = [];
+      groups[vendor].push(os);
+    }
+
+    for (const [vendor, entries] of Object.entries(groups)) {
+      const optgroup = document.createElement('optgroup');
+      optgroup.label = vendor;
+      for (const os of entries) {
+        const option = document.createElement('option');
+        option.value = os.id;
+        option.textContent = os.name;
+        optgroup.appendChild(option);
+      }
+      select.appendChild(optgroup);
+    }
+  }
+
+  /**
+   * Render detailed CPU + OS compatibility report.
+   */
+  function renderCpuOsReport(cpu, os, result) {
+    const container = document.getElementById('cpuos-result');
+
+    const verdictIcon = result.overall === 'pass' ? 'bi-check-circle-fill' :
+                        result.overall === 'fail' ? 'bi-x-circle-fill' : 'bi-exclamation-triangle-fill';
+    const verdictText = result.overall === 'pass' ? 'Compatible' :
+                        result.overall === 'fail' ? 'Not Compatible' : 'Partial Compatibility';
+    const verdictClass = `verdict-${result.overall}`;
+
+    const checksHtml = result.checks.map(c => {
+      const icon = c.status === 'pass' ? 'bi-check-circle-fill text-success' :
+                   c.status === 'fail' ? 'bi-x-circle-fill text-danger' :
+                   c.status === 'warn' ? 'bi-exclamation-triangle-fill text-warning' :
+                   'bi-dash-circle text-muted';
+      return `
+        <tr class="detail-check-row">
+          <td><i class="bi ${icon}"></i></td>
+          <td class="fw-semibold">${escapeHtml(c.name)}</td>
+          <td class="text-muted">${escapeHtml(c.detail)}</td>
+        </tr>`;
+    }).join('');
+
+    container.innerHTML = `
+      <!-- CPU summary -->
+      <div class="card mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h6 class="mb-0"><i class="bi bi-cpu"></i> ${escapeHtml(cpu.name)}</h6>
+          <span class="badge badge-level-${cpu.x86_64_level}">v${cpu.x86_64_level}</span>
+        </div>
+        <div class="card-body py-2 small text-muted">
+          ${cpu.cores ? cpu.cores + ' cores' : ''}${cpu.boostClock ? ' / ' + cpu.boostClock + ' GHz boost' : ''}${cpu.socket ? ' / ' + escapeHtml(cpu.socket) : ''}
+        </div>
+      </div>
+
+      <!-- OS summary -->
+      <div class="card mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h6 class="mb-0"><i class="bi bi-windows"></i> ${escapeHtml(os.name)}</h6>
+          <span class="badge badge-level-${os.x86_64_level}">v${os.x86_64_level}</span>
+        </div>
+        <div class="card-body py-2 small text-muted">
+          Min RAM: ${os.minRamGB} GB | Min Storage: ${os.minStorageGB} GB
+        </div>
+      </div>
+
+      <!-- Verdict -->
+      <div class="verdict-box ${verdictClass} mb-3">
+        <i class="bi ${verdictIcon}"></i>
+        <span>${verdictText}</span>
+      </div>
+
+      <!-- Detailed checks table -->
+      <div class="card">
+        <div class="card-header"><h6 class="mb-0">Detailed Checks</h6></div>
+        <div class="card-body p-0">
+          <table class="table table-sm mb-0">
+            <tbody>
+              ${checksHtml}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
   return {
     renderAutocomplete,
     renderCpuInfo,
     renderCpuCompatResults,
     populateOsSelect,
+    populateCpuOsOsSelect,
     renderOsInfo,
     renderOsCompatResults,
+    renderCpuOsReport,
     showMetadata,
   };
 })();

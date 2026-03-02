@@ -52,6 +52,13 @@
             <i class="bi bi-windows"></i> Search by OS
           </button>
         </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="cpuos-tab" data-bs-toggle="tab"
+                  data-bs-target="#cpuos-pane" type="button" role="tab"
+                  aria-controls="cpuos-pane" aria-selected="false">
+            <i class="bi bi-search"></i> Search by CPU + OS
+          </button>
+        </li>
       </ul>
 
       <div class="tab-content pt-3" id="searchTabContent">
@@ -120,6 +127,28 @@
                 </div>
                 <div id="os-compat-results"></div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search by CPU + OS Tab -->
+        <div class="tab-pane fade" id="cpuos-pane" role="tabpanel" aria-labelledby="cpuos-tab">
+          <div class="row">
+            <div class="col-lg-8 mx-auto">
+              <div class="mb-3 position-relative">
+                <label for="cpuos-cpu-search" class="form-label fw-bold">Enter CPU model name</label>
+                <input type="text" class="form-control form-control-lg" id="cpuos-cpu-search"
+                       placeholder="e.g. i7-12700K, Ryzen 7 5800X..."
+                       autocomplete="off">
+                <div id="cpuos-cpu-autocomplete" class="autocomplete-dropdown d-none"></div>
+              </div>
+              <div class="mb-3">
+                <label for="cpuos-os-select" class="form-label fw-bold">Select an operating system</label>
+                <select class="form-select form-select-lg" id="cpuos-os-select">
+                  <option value="">-- Choose an OS --</option>
+                </select>
+              </div>
+              <div id="cpuos-result"></div>
             </div>
           </div>
         </div>

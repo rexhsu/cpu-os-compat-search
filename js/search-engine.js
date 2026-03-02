@@ -180,5 +180,94 @@ const SearchEngine = (() => {
     return scored.slice(0, limit).map(s => s.cpu);
   }
 
-  return { checkCompatibility, findCompatibleOs, findCompatibleCpus, searchCpus, isOnWin11Whitelist };
+  /**
+   * Detailed one-to-one compatibility check between a CPU and an OS.
+   * Returns { overall: 'pass'|'warn'|'fail', checks: [{name, status, detail}] }
+   */
+  function detailedCheck(cpu, os) {
+    const checks = [];
+    let overall = 'pass';
+
+    // x86-64 Level check
+    if (cpu.x86_64_level >= os.x86_64_level) {
+      checks.push({
+        name: 'x86-64 Level',
+        status: 'pass',
+        detail: `CPU v${cpu.x86_64_level} meets required v${os.x86_64_level}`,
+      });
+    } else {
+      overall = 'fail';
+      checks.push({
+        name: 'x86-64 Level',
+        status: 'fail',
+        detail: `CPU v${cpu.x86_64_level} does not meet required v${os.x86_64_level}`,
+      });
+    }
+
+    // Per-feature checks
+    const featuresToCheck = ['sse42', 'popcnt', 'avx', 'avx2', 'fma', 'bmi1', 'bmi2'];
+    const featureLabels = {
+      sse42: 'SSE4.2', popcnt: 'POPCNT', avx: 'AVX', avx2: 'AVX2',
+      fma: 'FMA', bmi1: 'BMI1', bmi2: 'BMI2',
+    };
+
+    for (const feat of featuresToCheck) {
+      const required = os.requiredFeatures && os.requiredFeatures.includes(feat);
+      const has = !!cpu.features[feat];
+
+      if (!required) {
+        checks.push({
+          name: featureLabels[feat],
+          status: has ? 'pass' : 'info',
+          detail: required ? '' : (has ? 'Supported (not required by OS)' : 'Not supported (not required by OS)'),
+        });
+      } else if (has) {
+        checks.push({
+          name: featureLabels[feat],
+          status: 'pass',
+          detail: 'Required and supported',
+        });
+      } else {
+        overall = 'fail';
+        checks.push({
+          name: featureLabels[feat],
+          status: 'fail',
+          detail: 'Required but not supported',
+        });
+      }
+    }
+
+    // TPM 2.0 check
+    if (os.additionalRequirements?.tpm2) {
+      if (cpu.features.tpm2) {
+        checks.push({ name: 'TPM 2.0', status: 'pass', detail: 'Required and supported' });
+      } else {
+        if (overall !== 'fail') overall = 'warn';
+        checks.push({ name: 'TPM 2.0', status: 'warn', detail: 'Required (may need discrete TPM module)' });
+      }
+    }
+
+    // Win11 CPU Whitelist check
+    if (os.additionalRequirements?.win11CpuWhitelist) {
+      if (isOnWin11Whitelist(cpu)) {
+        checks.push({ name: 'Win11 CPU Whitelist', status: 'pass', detail: 'CPU is on supported list' });
+      } else {
+        const isLikelySupported = (
+          (cpu.vendor === 'intel' && cpu.generation >= 8) ||
+          (cpu.vendor === 'amd' && cpu.x86_64_level >= 3)
+        );
+        if (!isLikelySupported) {
+          overall = 'fail';
+          checks.push({ name: 'Win11 CPU Whitelist', status: 'fail', detail: 'Not on Windows 11 supported CPU list' });
+        } else {
+          if (overall === 'pass') overall = 'warn';
+          checks.push({ name: 'Win11 CPU Whitelist', status: 'warn', detail: 'Not found in whitelist (likely supported based on generation)' });
+        }
+      }
+    }
+
+    return { overall, checks };
+  }
+
+  return { checkCompatibility, findCompatibleOs, findCompatibleCpus, searchCpus, isOnWin11Whitelist, detailedCheck };
 })();

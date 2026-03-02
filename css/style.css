@@ -161,6 +161,46 @@
   border-bottom: none;
 }
 
+/* CPU+OS detailed report */
+.verdict-box {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-radius: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.verdict-box i {
+  font-size: 1.75rem;
+}
+
+.verdict-pass {
+  background-color: #d1e7dd;
+  color: #0f5132;
+}
+
+.verdict-fail {
+  background-color: #f8d7da;
+  color: #842029;
+}
+
+.verdict-warn {
+  background-color: #fff3cd;
+  color: #664d03;
+}
+
+.detail-check-row td {
+  padding: 0.5rem 0.75rem;
+  vertical-align: middle;
+}
+
+.detail-check-row td:first-child {
+  width: 2rem;
+  text-align: center;
+}
+
 /* Responsive */
 @media (max-width: 576px) {
   .cpu-spec-item .spec-value {
